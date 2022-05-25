@@ -12,6 +12,7 @@ class AccountReadRepository(private val eventReader: EventReader) : Accounts {
     override fun all(): List<Account> {
         return eventReader.byType(Account::class)
             .map { Account(it) }
+            .filter { !it.deleted }
     }
 
     override fun by(accountId: AccountId): Account {
@@ -19,7 +20,10 @@ class AccountReadRepository(private val eventReader: EventReader) : Accounts {
         if (eventStream.isEmpty())
             throw NoSuchEntityExists("Account", accountId)
 
-        return Account(eventStream)
+        val account = Account(eventStream)
+        if (account.deleted)
+            throw NoSuchEntityExists("Account", accountId)
+        return account
     }
 
 }

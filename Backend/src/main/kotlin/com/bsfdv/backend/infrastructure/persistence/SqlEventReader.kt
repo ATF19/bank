@@ -26,13 +26,13 @@ class SqlEventReader(private val jdbcTemplate: JdbcTemplate, private val jsonMap
     private fun <TId : Id> mapToEventStream(rows: List<Map<String, Any>>): EventStream<TId> {
         val events = rows.map { mapToEvent(it) as Event<TId> }
             .toSortedSet(compareBy { it })
-        return EventStream(events)
+        return PersistenceAwareEventStream(events)
     }
 
     private fun <TId : Id> mapToListOfEventStreams(rows: List<Map<String, Any>>): List<EventStream<TId>> {
         return rows.map { mapToEvent(it) }
             .groupBy { it.aggregateId }
-            .map { EventStream(it.value as List<Event<TId>>) }
+            .map { PersistenceAwareEventStream(it.value as List<Event<TId>>) }
     }
 
     private fun mapToEvent(row: Map<String, Any>): Event<*> {

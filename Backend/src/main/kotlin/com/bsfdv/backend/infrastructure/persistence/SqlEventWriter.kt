@@ -2,12 +2,14 @@ package com.bsfdv.backend.infrastructure.persistence
 
 import com.bsfdv.backend.domain.model.core.DomainEntity
 import com.bsfdv.backend.domain.model.core.Event
+import com.bsfdv.backend.domain.model.core.Id
 import com.bsfdv.backend.domain.model.core.UnitOfWork
 import com.bsfdv.backend.domain.service.core.EventWriter
 import com.bsfdv.backend.infrastructure.mapping.JsonMapper
 import com.google.common.eventbus.EventBus
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.util.*
 import kotlin.reflect.KClass
 
 @Repository
@@ -25,7 +27,6 @@ class SqlEventWriter(
     private fun getUnsavedEvents(unitOfWork: UnitOfWork): List<EventAndAggregateType> {
         return unitOfWork.domainEntities
             .flatMap { mapToEventAndAggregateType(it) }
-            .filter { !it.event.isSaved }
             .toList()
     }
 
@@ -50,7 +51,11 @@ class SqlEventWriter(
     }
 
     private fun mapToEventAndAggregateType(entity: DomainEntity<*>): List<EventAndAggregateType> {
-        return entity.history.events()
+        val events: SortedSet<out Event<*>> = if (entity.history is PersistenceAwareEventStream)
+            (entity.history as PersistenceAwareEventStream<out Id>).unsavedEvents()
+        else
+            entity.history.events()
+        return events
             .map { EventAndAggregateType(it, entity::class) }
             .toList()
     }

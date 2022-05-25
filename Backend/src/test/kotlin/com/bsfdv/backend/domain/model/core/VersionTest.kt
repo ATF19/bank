@@ -19,4 +19,30 @@ internal class VersionTest {
         // then
         assertThat(nextVersion).isEqualTo(Version(2))
     }
+
+    @Test
+    fun is_after() {
+        // given
+        val version = Version(1)
+        val next = Version(2)
+
+        // when
+        val result = next.isAfter(version)
+
+        // then
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun is_not_after() {
+        // given
+        val version = Version(1)
+        val next = Version(0)
+
+        // when
+        val result = version.isAfter(version)
+
+        // then
+        assertThat(result).isFalse
+    }
 }

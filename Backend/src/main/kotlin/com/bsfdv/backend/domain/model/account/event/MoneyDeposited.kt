@@ -6,5 +6,5 @@ import com.bsfdv.backend.domain.model.core.Event
 import com.bsfdv.backend.domain.model.core.Version
 import java.time.Instant
 
-class MoneyDeposited(id: AccountId, val amount: Money, version: Version, time: Instant) :
-    Event<AccountId>(id, version, time)
+class MoneyDeposited(aggregateId: AccountId, val amount: Money, version: Version, time: Instant) :
+    Event<AccountId>(aggregateId, version, time)

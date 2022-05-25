@@ -3,11 +3,9 @@ package com.bsfdv.backend.domain.model.core
 import java.time.Instant
 import java.util.*
 
-class EventStream<TId : Id>(private val events: SortedSet<Event<TId>>) {
+open class EventStream<TId : Id>(private val events: SortedSet<Event<TId>>) {
 
     constructor(event: Event<TId>) : this(sortedSetOf<Event<TId>>(event))
-
-    constructor(events: List<Event<TId>>) : this(events.toSortedSet(compareBy { it }))
 
     fun creationTime(): Instant {
         if (events.isEmpty())

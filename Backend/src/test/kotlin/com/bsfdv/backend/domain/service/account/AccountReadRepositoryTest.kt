@@ -57,7 +57,7 @@ internal class AccountReadRepositoryTest {
     fun throw_error_if_no_account_exists_for_given_id() {
         // given
         val id = AccountId()
-        given(eventReader.by(id)).willReturn(EventStream(emptyList()))
+        given(eventReader.by(id)).willReturn(EventStream(sortedSetOf()))
 
         // when
 

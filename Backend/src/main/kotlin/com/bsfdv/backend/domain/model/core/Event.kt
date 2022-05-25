@@ -4,8 +4,7 @@ import java.time.Instant
 
 abstract class Event<TId : Id>(
     val aggregateId: TId, val version: Version,
-    val time: Instant, val isForDeletion: Boolean = false,
-    val isSaved: Boolean = false
+    val time: Instant, val isForDeletion: Boolean = false
 ) : Comparable<Event<Id>> {
 
     override fun compareTo(other: Event<Id>) = version.compareTo(other.version)

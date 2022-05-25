@@ -7,6 +7,6 @@ import com.bsfdv.backend.domain.model.core.Version
 import java.time.Instant
 
 class HolderInformationUpdated(
-    id: AccountId, val newHolderInformation: AccountHolder,
+    aggregateId: AccountId, val newHolderInformation: AccountHolder,
     version: Version, time: Instant
-) : Event<AccountId>(id, version, time)
+) : Event<AccountId>(aggregateId, version, time)

@@ -118,7 +118,7 @@ internal class EventStreamTest {
     @Test
     fun is_empty() {
         // given
-        eventStream = EventStream(emptyList())
+        eventStream = EventStream(sortedSetOf())
 
         // when
         val result = eventStream.isEmpty()
