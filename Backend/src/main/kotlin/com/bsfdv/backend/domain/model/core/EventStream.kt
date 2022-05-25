@@ -33,6 +33,8 @@ class EventStream<TId : Id>(private val events: SortedSet<Event<TId>>) {
         events.add(event)
     }
 
+    fun isEmpty() = events.isEmpty()
+
 }
 
 class EventStreamCannotBeEmpty : DomainException()

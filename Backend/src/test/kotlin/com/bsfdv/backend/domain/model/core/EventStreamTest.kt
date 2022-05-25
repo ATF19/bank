@@ -114,4 +114,27 @@ internal class EventStreamTest {
         // then
         assertThat(eventStream.events()).containsExactly(event1, event2, event3, event4)
     }
+
+    @Test
+    fun is_empty() {
+        // given
+        eventStream = EventStream(emptyList())
+
+        // when
+        val result = eventStream.isEmpty()
+
+        // then
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun is_not_empty() {
+        // given
+
+        // when
+        val result = eventStream.isEmpty()
+
+        // then
+        assertThat(result).isFalse
+    }
 }

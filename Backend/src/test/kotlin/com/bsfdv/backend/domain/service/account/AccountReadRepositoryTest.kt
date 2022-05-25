@@ -2,10 +2,14 @@ package com.bsfdv.backend.domain.service.account
 
 import com.bsfdv.backend.domain.model.account.Account
 import com.bsfdv.backend.domain.model.account.AccountHolder
+import com.bsfdv.backend.domain.model.account.AccountId
 import com.bsfdv.backend.domain.model.common.Money
+import com.bsfdv.backend.domain.model.core.EventStream
 import com.bsfdv.backend.domain.service.core.EventReader
+import com.bsfdv.backend.domain.service.core.NoSuchEntityExists
 import com.bsfdv.backend.suites.UNIT_TEST
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -47,5 +51,30 @@ internal class AccountReadRepositoryTest {
 
         // then
         assertThat(result).containsExactlyInAnyOrder(account1, account2, account3)
+    }
+
+    @Test
+    fun throw_error_if_no_account_exists_for_given_id() {
+        // given
+        val id = AccountId()
+        given(eventReader.by(id)).willReturn(EventStream(emptyList()))
+
+        // when
+
+        // then
+        assertThatThrownBy { accounts.by(id) }
+            .isInstanceOf(NoSuchEntityExists::class.java)
+    }
+
+    @Test
+    fun retrieve_account_by_id() {
+        // given
+        given(eventReader.by(account1.id)).willReturn(account1.history)
+
+        // when
+        val result = accounts.by(account1.id)
+
+        // then
+        assertThat(result).isEqualTo(account1)
     }
 }

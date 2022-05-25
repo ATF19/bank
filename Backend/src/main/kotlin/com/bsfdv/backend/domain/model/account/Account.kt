@@ -5,7 +5,7 @@ import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.domain.model.core.*
 import java.time.Instant
 
-class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(history) {
+open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(history) {
 
     lateinit var holder: AccountHolder private set
     lateinit var balance: Money private set
