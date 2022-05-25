@@ -81,5 +81,27 @@ class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(history
     private fun applyMoneyWithdrew(moneyWithdrew: MoneyWithdrew) {
         balance = balance.minus(moneyWithdrew.amount)
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is Account) return false
+        if (!super.equals(other)) return false
+
+        if (holder != other.holder) return false
+        if (balance != other.balance) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + holder.hashCode()
+        result = 31 * result + balance.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "Account(holder=$holder, balance=$balance)"
+    }
 }
 

@@ -46,11 +46,22 @@ abstract class DomainEntity<TId : Id> {
         if (this === other) return true
         if (other !is DomainEntity<*>) return false
 
-        return id == other.id
+        if (id != other.id) return false
+        if (createdAt != other.createdAt) return false
+        if (updatedAt != other.updatedAt) return false
+        if (deleted != other.deleted) return false
+        if (version != other.version) return false
+
+        return true
     }
 
     override fun hashCode(): Int {
-        return id.hashCode()
+        var result = id.hashCode()
+        result = 31 * result + createdAt.hashCode()
+        result = 31 * result + (updatedAt?.hashCode() ?: 0)
+        result = 31 * result + deleted.hashCode()
+        result = 31 * result + version.hashCode()
+        return result
     }
 
     override fun toString(): String {
