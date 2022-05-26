@@ -5,3 +5,6 @@ import com.bsfdv.backend.domain.model.core.DomainException
 
 class InvalidTransferAmount(amount: Money) :
     DomainException("The transfer amount, ${amount.amount}, is invalid.")
+
+class SourceAndDestinationAccountsShouldBeDifferent() :
+    DomainException("Cannot do a transfer to the same account.")

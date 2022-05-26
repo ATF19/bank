@@ -39,6 +39,18 @@ class TransferTest {
     }
 
     @Test
+    fun throw_error_when_trying_to_create_a_transfer_with_the_same_source_and_destination() {
+        // given
+        destination = AccountId(source.rawId)
+
+        // when
+
+        // then
+        assertThatThrownBy { Transfer.doTransfer(source, destination, amount, motif) }
+            .isInstanceOf(SourceAndDestinationAccountsShouldBeDifferent::class.java)
+    }
+
+    @Test
     fun create_transfer() {
         // given
 

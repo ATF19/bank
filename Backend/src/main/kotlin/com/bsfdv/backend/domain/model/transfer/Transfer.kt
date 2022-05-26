@@ -22,6 +22,7 @@ open class Transfer(history: EventStream<TransferId>) : DomainEntity<TransferId>
     companion object {
         fun doTransfer(source: AccountId, destination: AccountId, amount: Money, motif: TransferMotif): Transfer {
             verifyTransferAmount(amount)
+            verifySourceAndDestinationAreDifferent(source, destination)
             val transferCreated = TransferCreated(
                 TransferId(), source, destination, amount, TransferStatus.PENDING,
                 motif, START_VERSION, Instant.now()
@@ -33,6 +34,11 @@ open class Transfer(history: EventStream<TransferId>) : DomainEntity<TransferId>
         private fun verifyTransferAmount(amount: Money) {
             if (amount.isBelowZero())
                 throw InvalidTransferAmount(amount)
+        }
+
+        private fun verifySourceAndDestinationAreDifferent(source: AccountId, destination: AccountId) {
+            if (source == destination)
+                throw SourceAndDestinationAccountsShouldBeDifferent()
         }
     }
 
