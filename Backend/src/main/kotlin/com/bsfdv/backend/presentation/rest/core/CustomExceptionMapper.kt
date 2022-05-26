@@ -63,6 +63,7 @@ class CustomExceptionMapper : ResponseEntityExceptionHandler() {
             else -> {
                 status = HttpStatus.INTERNAL_SERVER_ERROR
                 errorCode = ErrorCode.INTERNAL_ERROR
+                message = "A generic error occurred, please report it."
             }
         }
 

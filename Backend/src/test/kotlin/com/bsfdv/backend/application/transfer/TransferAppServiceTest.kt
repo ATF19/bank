@@ -1,10 +1,11 @@
-package com.bsfdv.backend.domain.service.transfer
+package com.bsfdv.backend.application.transfer
 
 import com.bsfdv.backend.domain.model.account.AccountId
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.domain.model.transfer.Transfer
 import com.bsfdv.backend.domain.model.transfer.TransferMotif
-import com.bsfdv.backend.domain.service.core.EventReader
+import com.bsfdv.backend.domain.service.core.EventWriter
+import com.bsfdv.backend.domain.service.transfer.Transfers
 import com.bsfdv.backend.suites.UNIT_TEST
 import io.mockk.every
 import io.mockk.mockk
@@ -15,10 +16,11 @@ import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 
 @Tag(UNIT_TEST)
-class TransferReadRepositoryTest {
+class TransferAppServiceTest {
 
+    private lateinit var transferAppService: TransferAppService
     private lateinit var transfers: Transfers
-    private lateinit var eventReader: EventReader
+    private lateinit var eventWriter: EventWriter
     private lateinit var transfer1: Transfer
     private lateinit var transfer2: Transfer
     private lateinit var transfer3: Transfer
@@ -26,8 +28,9 @@ class TransferReadRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        eventReader = mockk()
-        transfers = TransferReadRepository(eventReader)
+        transfers = mockk()
+        eventWriter = mockk()
+        transferAppService = TransferAppService(transfers, eventWriter)
         transfer1 =
             Transfer.doTransfer(AccountId(), AccountId(), Money(BigDecimal(200)), TransferMotif("Just for testing"))
         transfer2 =
@@ -39,56 +42,51 @@ class TransferReadRepositoryTest {
         transfer2.complete()
         transfer3.complete()
         transfer4.reject()
-        every { eventReader.by(transfer1.id) }.returns(transfer1.history)
-        every { eventReader.byType(Transfer::class) }.returns(
-            listOf(
-                transfer1.history,
-                transfer2.history,
-                transfer3.history,
-                transfer4.history
-            )
-        )
+        every { transfers.by(transfer1.id) }.returns(transfer1)
+        every { transfers.pending() }.returns(listOf(transfer1))
+        every { transfers.completed() }.returns(listOf(transfer2, transfer3))
+        every { transfers.rejected() }.returns(listOf(transfer4))
     }
 
     @Test
-    fun can_retrieve_transfer_by_id() {
+    fun delegate_retrieve_transfer_by_id_to_domain_service() {
         // given
 
         // when
-        val result = transfers.by(transfer1.id)
+        val result = transferAppService.by(transfer1.id)
 
         // then
         assertThat(result).isEqualTo(transfer1)
     }
 
     @Test
-    fun can_retrieve_pending_transfers() {
+    fun delegate_retrieve_pending_transfers_to_domain_service() {
         // given
 
         // when
-        val result = transfers.pending()
+        val result = transferAppService.pending()
 
         // then
         assertThat(result).containsExactlyInAnyOrder(transfer1)
     }
 
     @Test
-    fun can_retrieve_completed_transfers() {
+    fun delegate_retrieve_completed_transfers_to_domain_service() {
         // given
 
         // when
-        val result = transfers.completed()
+        val result = transferAppService.completed()
 
         // then
         assertThat(result).containsExactlyInAnyOrder(transfer2, transfer3)
     }
 
     @Test
-    fun can_retrieve_rejected_transfers() {
+    fun delegate_retrieve_rejected_transfers_to_domain_service() {
         // given
 
         // when
-        val result = transfers.rejected()
+        val result = transferAppService.rejected()
 
         // then
         assertThat(result).containsExactlyInAnyOrder(transfer4)
