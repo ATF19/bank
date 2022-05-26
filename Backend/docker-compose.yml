@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend-container
+    environment:
+      - BSFDV_BACKEND_PORT=9001
+    image: atf19/bank-backend
+    ports:
+      - "9001:9001"
+    restart: always
