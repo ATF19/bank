@@ -1,4 +1,4 @@
-package com.bsfdv.backend.presentation.rest
+package com.bsfdv.backend.presentation.rest.core
 
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
