@@ -9,4 +9,6 @@ class AccountId : Id {
     constructor(rawId: String) : super(rawId)
 }
 
+data class AccountNumber(val number: String)
+
 data class AccountHolder(val firstName: String, val lastName: String)

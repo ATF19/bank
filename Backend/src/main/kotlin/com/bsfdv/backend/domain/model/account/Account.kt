@@ -7,13 +7,14 @@ import java.time.Instant
 
 open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(history) {
 
+    lateinit var number: AccountNumber private set
     lateinit var holder: AccountHolder private set
     lateinit var balance: Money private set
 
     companion object {
-        fun openAccount(holder: AccountHolder, initialBalance: Money): Account {
+        fun openAccount(number: AccountNumber, holder: AccountHolder, initialBalance: Money): Account {
             verifyBalance(initialBalance)
-            val accountOpened = AccountOpened(AccountId(), holder, initialBalance, START_VERSION, Instant.now())
+            val accountOpened = AccountOpened(AccountId(), number, holder, initialBalance, START_VERSION, Instant.now())
             val eventStream = EventStream(accountOpened)
             return Account(eventStream)
         }
@@ -79,6 +80,7 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
     }
 
     private fun applyAccountOpened(accountOpened: AccountOpened) {
+        number = accountOpened.number
         holder = accountOpened.holder
         balance = accountOpened.initialBalance
     }

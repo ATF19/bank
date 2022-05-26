@@ -3,10 +3,16 @@ package com.bsfdv.backend.presentation.rest.account
 import com.bsfdv.backend.domain.model.account.Account
 import io.swagger.v3.oas.annotations.media.Schema
 
-data class AccountDto(val id: String, val firstName: String, val lastName: String, val balance: String) {
+data class AccountDto(
+    val id: String,
+    val number: String,
+    val firstName: String,
+    val lastName: String,
+    val balance: String
+) {
     companion object {
         fun from(account: Account) = AccountDto(
-            account.id.rawId.toString(), account.holder.firstName, account.holder.lastName,
+            account.id.rawId.toString(), account.number.number, account.holder.firstName, account.holder.lastName,
             account.balance.toString()
         )
     }

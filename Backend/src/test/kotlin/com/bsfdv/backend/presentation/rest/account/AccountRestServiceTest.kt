@@ -3,6 +3,7 @@ package com.bsfdv.backend.presentation.rest.account
 import com.bsfdv.backend.application.account.*
 import com.bsfdv.backend.domain.model.account.Account
 import com.bsfdv.backend.domain.model.account.AccountHolder
+import com.bsfdv.backend.domain.model.account.AccountNumber
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.suites.UNIT_TEST
 import io.mockk.every
@@ -26,8 +27,8 @@ class AccountRestServiceTest {
     fun setUp() {
         accountAppService = mockk(relaxed = true)
         accountRestService = AccountRestService(accountAppService)
-        account1 = Account.openAccount(AccountHolder("John", "Doe"), Money(BigDecimal(2000)))
-        account2 = Account.openAccount(AccountHolder("Jessica", "Doe"), Money(BigDecimal(0)))
+        account1 = Account.openAccount(AccountNumber("TEST-1"), AccountHolder("John", "Doe"), Money(BigDecimal(2000)))
+        account2 = Account.openAccount(AccountNumber("TEST-2"), AccountHolder("Jessica", "Doe"), Money(BigDecimal(0)))
         every { accountAppService.all() }.returns(listOf(account1, account2))
     }
 

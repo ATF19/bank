@@ -3,6 +3,7 @@ package com.bsfdv.backend.domain.service.account
 import com.bsfdv.backend.domain.model.account.Account
 import com.bsfdv.backend.domain.model.account.AccountHolder
 import com.bsfdv.backend.domain.model.account.AccountId
+import com.bsfdv.backend.domain.model.account.AccountNumber
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.domain.model.core.EventStream
 import com.bsfdv.backend.domain.service.core.EventReader
@@ -30,9 +31,10 @@ internal class AccountReadRepositoryTest {
     fun setUp() {
         eventReader = mockk()
         accounts = AccountReadRepository(eventReader)
-        account1 = Account.openAccount(AccountHolder("Joh", "Doe"), Money(BigDecimal(2000)))
-        account2 = Account.openAccount(AccountHolder("Jessica", "Doe"), Money(BigDecimal(0)))
-        account3 = Account.openAccount(AccountHolder("Amelie", "Scarlit"), Money(BigDecimal(100)))
+        account1 = Account.openAccount(AccountNumber("TEST1"), AccountHolder("Joh", "Doe"), Money(BigDecimal(2000)))
+        account2 = Account.openAccount(AccountNumber("TEST2"), AccountHolder("Jessica", "Doe"), Money(BigDecimal(0)))
+        account3 =
+            Account.openAccount(AccountNumber("TEST3"), AccountHolder("Amelie", "Scarlit"), Money(BigDecimal(100)))
         every { eventReader.byType(Account::class) }.returns(
             listOf(
                 account1.history,
@@ -73,6 +75,29 @@ internal class AccountReadRepositoryTest {
 
         // when
         val result = accounts.by(account1.id)
+
+        // then
+        assertThat(result).isEqualTo(account1)
+    }
+
+    @Test
+    fun return_null_if_no_account_with_given_number_exists() {
+        // given
+        val number = AccountNumber("NON-EXISTING")
+
+        // when
+        val result = accounts.by(number)
+
+        // then
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun retrieve_account_by_number() {
+        // given
+
+        // when
+        val result = accounts.by(account1.number)
 
         // then
         assertThat(result).isEqualTo(account1)

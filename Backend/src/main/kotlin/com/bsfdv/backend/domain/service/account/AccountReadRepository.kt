@@ -2,6 +2,7 @@ package com.bsfdv.backend.domain.service.account
 
 import com.bsfdv.backend.domain.model.account.Account
 import com.bsfdv.backend.domain.model.account.AccountId
+import com.bsfdv.backend.domain.model.account.AccountNumber
 import com.bsfdv.backend.domain.service.core.DomainService
 import com.bsfdv.backend.domain.service.core.EventReader
 import com.bsfdv.backend.domain.service.core.NoSuchEntityExists
@@ -25,5 +26,7 @@ class AccountReadRepository(private val eventReader: EventReader) : Accounts {
             throw NoSuchEntityExists("Account", accountId)
         return account
     }
+
+    override fun by(number: AccountNumber) = all().find { it.number == number }
 
 }

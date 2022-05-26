@@ -2,17 +2,24 @@ package com.bsfdv.backend.application.account
 
 import com.bsfdv.backend.application.core.ApplicationService
 import com.bsfdv.backend.domain.model.account.Account
+import com.bsfdv.backend.domain.model.account.AccountNumber
+import com.bsfdv.backend.domain.model.core.DomainException
 import com.bsfdv.backend.domain.model.core.UnitOfWork
+import com.bsfdv.backend.domain.service.account.AccountNumberGenerator
 import com.bsfdv.backend.domain.service.account.Accounts
 import com.bsfdv.backend.domain.service.core.EventWriter
 
 @ApplicationService
-class AccountAppService(private val accounts: Accounts, private val eventWriter: EventWriter) {
+class AccountAppService(
+    private val accounts: Accounts, private val accountNumberGenerator: AccountNumberGenerator,
+    private val eventWriter: EventWriter
+) {
 
     fun all() = accounts.all()
 
     fun openAccount(openAccountCommand: OpenAccountCommand): Account {
-        val account = Account.openAccount(openAccountCommand.holder, openAccountCommand.initialBalance)
+        val number = generateUniqueNumber()
+        val account = Account.openAccount(number, openAccountCommand.holder, openAccountCommand.initialBalance)
         return saveAndReturnAccount(account)
     }
 
@@ -56,5 +63,19 @@ class AccountAppService(private val accounts: Accounts, private val eventWriter:
         val unitOfWork = UnitOfWork(account)
         eventWriter.save(unitOfWork)
         return account
+    }
+
+    private fun generateUniqueNumber(): AccountNumber {
+        val maxRetries = 20
+        var retryNumber = 1
+        var number: AccountNumber
+        do {
+            if (retryNumber > maxRetries)
+                throw DomainException("Could not generate a unique account number. Please try again.")
+
+            number = accountNumberGenerator.generate()
+            retryNumber++
+        } while (accounts.by(number) != null)
+        return number
     }
 }

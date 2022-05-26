@@ -2,6 +2,7 @@ package com.bsfdv.backend.presentation.rest.account
 
 import com.bsfdv.backend.domain.model.account.Account
 import com.bsfdv.backend.domain.model.account.AccountHolder
+import com.bsfdv.backend.domain.model.account.AccountNumber
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.suites.UNIT_TEST
 import org.assertj.core.api.Assertions.assertThat
@@ -17,7 +18,7 @@ internal class AccountDtoTest {
 
     @BeforeEach
     fun setUp() {
-        account = Account.openAccount(AccountHolder("John", "Doe"), Money(BigDecimal(2000)))
+        account = Account.openAccount(AccountNumber("TEST1"), AccountHolder("John", "Doe"), Money(BigDecimal(2000)))
     }
 
     @Test
@@ -29,6 +30,7 @@ internal class AccountDtoTest {
 
         // then
         assertThat(dto.id).isEqualTo(account.id.rawId.toString())
+        assertThat(dto.number).isEqualTo("TEST1")
         assertThat(dto.firstName).isEqualTo("John")
         assertThat(dto.lastName).isEqualTo("Doe")
         assertThat(dto.balance).isEqualTo("2000.0000")

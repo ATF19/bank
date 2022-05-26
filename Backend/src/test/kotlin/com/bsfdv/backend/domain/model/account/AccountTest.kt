@@ -12,15 +12,17 @@ import java.math.BigDecimal
 @Tag(UNIT_TEST)
 internal class AccountTest {
 
+    private lateinit var number: AccountNumber
     private lateinit var holder: AccountHolder
     private lateinit var balance: Money
     private lateinit var account: Account
 
     @BeforeEach
     fun setUp() {
+        number = AccountNumber("TEST1")
         holder = AccountHolder("John", "Doe")
         balance = Money(BigDecimal(1500))
-        account = Account.openAccount(holder, balance)
+        account = Account.openAccount(number, holder, balance)
     }
 
     @Test
@@ -31,7 +33,7 @@ internal class AccountTest {
         // when
 
         // then
-        assertThatThrownBy { Account.openAccount(holder, balance) }
+        assertThatThrownBy { Account.openAccount(number, holder, balance) }
             .isInstanceOf(InvalidInitialBalance::class.java)
     }
 
@@ -40,9 +42,10 @@ internal class AccountTest {
         // given
 
         // when
-        val account = Account.openAccount(holder, balance)
+        val account = Account.openAccount(number, holder, balance)
 
         // then
+        assertThat(account.number).isEqualTo(number)
         assertThat(account.holder).isEqualTo(holder)
         assertThat(account.balance).isEqualTo(balance)
         assertThat(account.deleted).isFalse
@@ -63,7 +66,7 @@ internal class AccountTest {
     fun can_close_an_account() {
         // given
         balance = Money(BigDecimal(0))
-        account = Account.openAccount(holder, balance)
+        account = Account.openAccount(number, holder, balance)
 
         // when
         account.closeAccount()
