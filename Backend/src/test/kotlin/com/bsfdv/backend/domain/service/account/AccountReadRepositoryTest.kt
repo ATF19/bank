@@ -8,13 +8,13 @@ import com.bsfdv.backend.domain.model.core.EventStream
 import com.bsfdv.backend.domain.service.core.EventReader
 import com.bsfdv.backend.domain.service.core.NoSuchEntityExists
 import com.bsfdv.backend.suites.UNIT_TEST
+import io.mockk.every
+import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.mockito.BDDMockito.given
-import org.mockito.Mockito.mock
 import java.math.BigDecimal
 
 @Tag(UNIT_TEST)
@@ -28,12 +28,12 @@ internal class AccountReadRepositoryTest {
 
     @BeforeEach
     fun setUp() {
-        eventReader = mock(EventReader::class.java)
+        eventReader = mockk()
         accounts = AccountReadRepository(eventReader)
         account1 = Account.openAccount(AccountHolder("Joh", "Doe"), Money(BigDecimal(2000)))
         account2 = Account.openAccount(AccountHolder("Jessica", "Doe"), Money(BigDecimal(0)))
         account3 = Account.openAccount(AccountHolder("Amelie", "Scarlit"), Money(BigDecimal(100)))
-        given(eventReader.byType(Account::class)).willReturn(
+        every { eventReader.byType(Account::class) }.returns(
             listOf(
                 account1.history,
                 account2.history,
@@ -57,7 +57,7 @@ internal class AccountReadRepositoryTest {
     fun throw_error_if_no_account_exists_for_given_id() {
         // given
         val id = AccountId()
-        given(eventReader.by(id)).willReturn(EventStream(sortedSetOf()))
+        every { eventReader.by(id) }.returns(EventStream(sortedSetOf()))
 
         // when
 
@@ -69,7 +69,7 @@ internal class AccountReadRepositoryTest {
     @Test
     fun retrieve_account_by_id() {
         // given
-        given(eventReader.by(account1.id)).willReturn(account1.history)
+        every { eventReader.by(account1.id) }.returns(account1.history)
 
         // when
         val result = accounts.by(account1.id)
