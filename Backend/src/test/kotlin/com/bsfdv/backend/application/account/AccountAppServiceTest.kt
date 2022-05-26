@@ -68,6 +68,17 @@ class AccountAppServiceTest {
     }
 
     @Test
+    fun delegate_account_by_id_retrieval_to_repo() {
+        // given
+
+        // when
+        val result = accountAppService.by(account1.id)
+
+        // then
+        assertThat(result).isEqualTo(account1)
+    }
+
+    @Test
     fun delegate_account_holder_update_to_domain_entity() {
         // given
         val command = UpdateHolderInformationCommand(account1.id, AccountHolder("Jessica", "Doe"))

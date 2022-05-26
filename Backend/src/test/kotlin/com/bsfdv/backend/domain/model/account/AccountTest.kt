@@ -108,7 +108,7 @@ internal class AccountTest {
 
         // then
         assertThatThrownBy { account.withdraw(amount) }
-            .isInstanceOf(NoSufficientBalanceForWithdrawal::class.java)
+            .isInstanceOf(NoSufficientBalanceForWithdrawalOrTransfer::class.java)
         assertThat(account.balance).isEqualTo(balance)
     }
 
@@ -134,7 +134,7 @@ internal class AccountTest {
 
         // then
         assertThatThrownBy { account.transfer(amount, destination) }
-            .isInstanceOf(NoSufficientBalanceForWithdrawal::class.java)
+            .isInstanceOf(NoSufficientBalanceForWithdrawalOrTransfer::class.java)
         assertThat(account.balance).isEqualTo(balance)
     }
 

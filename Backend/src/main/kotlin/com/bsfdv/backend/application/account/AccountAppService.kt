@@ -2,6 +2,7 @@ package com.bsfdv.backend.application.account
 
 import com.bsfdv.backend.application.core.ApplicationService
 import com.bsfdv.backend.domain.model.account.Account
+import com.bsfdv.backend.domain.model.account.AccountId
 import com.bsfdv.backend.domain.model.account.AccountNumber
 import com.bsfdv.backend.domain.model.core.DomainException
 import com.bsfdv.backend.domain.model.core.UnitOfWork
@@ -16,6 +17,8 @@ class AccountAppService(
 ) {
 
     fun all() = accounts.all()
+
+    fun by(accountId: AccountId) = accounts.by(accountId)
 
     fun openAccount(openAccountCommand: OpenAccountCommand): Account {
         val number = generateUniqueNumber()

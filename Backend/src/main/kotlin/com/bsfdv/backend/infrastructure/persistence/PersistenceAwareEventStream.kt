@@ -11,7 +11,7 @@ class PersistenceAwareEventStream<TId : Id> : EventStream<TId> {
     private val lastSavedVersion: Version
 
     constructor(events: SortedSet<Event<TId>>) : super(events) {
-        lastSavedVersion = events.last().version
+        lastSavedVersion = if (events.isEmpty()) Version(-1) else events.last().version
     }
 
     constructor(events: List<Event<TId>>) : this(events.toSortedSet(compareBy { it }))

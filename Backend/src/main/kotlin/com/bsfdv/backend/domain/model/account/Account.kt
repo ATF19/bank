@@ -65,7 +65,7 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
 
     private fun verifyHaveSufficientBalanceToRemoveAmount(amount: Money) {
         if (balance.minus(amount).isBelowZero())
-            throw NoSufficientBalanceForWithdrawal(amount)
+            throw NoSufficientBalanceForWithdrawalOrTransfer(amount)
     }
 
     override fun apply(event: Event<AccountId>) {

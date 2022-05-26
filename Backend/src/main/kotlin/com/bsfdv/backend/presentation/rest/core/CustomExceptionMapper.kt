@@ -2,7 +2,7 @@ package com.bsfdv.backend.presentation.rest.core
 
 import com.bsfdv.backend.domain.model.account.ClosingAccountWithBalance
 import com.bsfdv.backend.domain.model.account.InvalidInitialBalance
-import com.bsfdv.backend.domain.model.account.NoSufficientBalanceForWithdrawal
+import com.bsfdv.backend.domain.model.account.NoSufficientBalanceForWithdrawalOrTransfer
 import com.bsfdv.backend.domain.model.transfer.InvalidTransferAmount
 import com.bsfdv.backend.domain.service.core.NoSuchEntityExists
 import com.bsfdv.backend.presentation.core.EmptyRequiredInput
@@ -40,7 +40,7 @@ class CustomExceptionMapper : ResponseEntityExceptionHandler() {
                 errorCode = ErrorCode.WRONG_VALUE
             }
 
-            is NoSufficientBalanceForWithdrawal -> {
+            is NoSufficientBalanceForWithdrawalOrTransfer -> {
                 status = HttpStatus.BAD_REQUEST
                 errorCode = ErrorCode.NOT_SUFFICIENT_BALANCE
             }

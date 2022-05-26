@@ -7,5 +7,5 @@ class InvalidInitialBalance(initialBalance: Money) :
     DomainException("The initial balance, ${initialBalance.amount}, is invalid.")
 
 class ClosingAccountWithBalance : DomainException("The account must have no balance in order to be closed.")
-class NoSufficientBalanceForWithdrawal(amountToWithdraw: Money) :
-    DomainException("The account does not have sufficient balance to withdraw ${amountToWithdraw.amount}.")
+class NoSufficientBalanceForWithdrawalOrTransfer(amountToWithdraw: Money) :
+    DomainException("The account does not have sufficient balance to withdraw/transfer ${amountToWithdraw.amount}.")

@@ -79,7 +79,7 @@ class TransferRestService(private val transferAppService: TransferAppService) {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Retrieve transfer.")
+    @Operation(operationId = "Transfer status", summary = "Retrieve transfer.")
     @ApiResponses(
         value = [
             ApiResponse(responseCode = "200", description = "Retrieved transfer."),
@@ -104,7 +104,10 @@ class TransferRestService(private val transferAppService: TransferAppService) {
     @Operation(summary = "Do a transfer.")
     @ApiResponses(
         value = [
-            ApiResponse(responseCode = "200", description = "Transfer requested with success."),
+            ApiResponse(
+                responseCode = "200",
+                description = "Transfer requested with success.",
+            ),
             ApiResponse(
                 responseCode = "400",
                 description = "The transfer parameters are not correct, please verify the given inputs.",
@@ -118,7 +121,7 @@ class TransferRestService(private val transferAppService: TransferAppService) {
         ]
     )
     fun doTransfer(@RequestBody request: DoTransferRequestDto): TransferDto {
-        logger.info("Opening an account.")
+        logger.info("Doing a transfer.")
         verifyAllInputsHaveValues(
             Pair("Source", request.source),
             Pair("Destination", request.destination),
