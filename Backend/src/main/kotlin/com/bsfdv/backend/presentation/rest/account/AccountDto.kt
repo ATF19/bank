@@ -19,18 +19,18 @@ data class AccountDto(
 }
 
 data class OpenAccountRequestDto(
-    @Schema(description = "First name of the account holder", required = true, example = "John") val firstName: String,
-    @Schema(description = "Last name of the account holder", required = true, example = "Doe") val lastName: String,
+    @Schema(description = "First name of the account holder.", required = true, example = "John") val firstName: String,
+    @Schema(description = "Last name of the account holder.", required = true, example = "Doe") val lastName: String,
     @Schema(
-        description = "The initial balance of the account",
+        description = "The initial balance of the account.",
         required = true,
         example = "1500.50"
     ) val initialBalance: String
 )
 
 data class UpdateHolderInformationRequestDto(
-    @Schema(description = "First name of the account holder", required = true, example = "John") val firstName: String,
-    @Schema(description = "Last name of the account holder", required = true, example = "Doe") val lastName: String
+    @Schema(description = "First name of the account holder.", required = true, example = "John") val firstName: String,
+    @Schema(description = "Last name of the account holder.", required = true, example = "Doe") val lastName: String
 )
 
 data class DepositAmountRequestDto(

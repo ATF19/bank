@@ -85,6 +85,11 @@ class AccountRestService(private val accountAppService: AccountAppService) {
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
             ),
             ApiResponse(
+                responseCode = "404",
+                description = "No account was found for the given ID.",
+                content = [Content(schema = Schema(implementation = ErrorDto::class))]
+            ),
+            ApiResponse(
                 responseCode = "500",
                 description = "An error occurred when updating the account.",
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
@@ -113,6 +118,11 @@ class AccountRestService(private val accountAppService: AccountAppService) {
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
             ),
             ApiResponse(
+                responseCode = "404",
+                description = "No account was found for the given ID.",
+                content = [Content(schema = Schema(implementation = ErrorDto::class))]
+            ),
+            ApiResponse(
                 responseCode = "500",
                 description = "An error occurred when depositing the amount.",
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
@@ -138,6 +148,11 @@ class AccountRestService(private val accountAppService: AccountAppService) {
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
             ),
             ApiResponse(
+                responseCode = "404",
+                description = "No account was found for the given ID.",
+                content = [Content(schema = Schema(implementation = ErrorDto::class))]
+            ),
+            ApiResponse(
                 responseCode = "500",
                 description = "An error occurred when withdrawing the amount.",
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
@@ -160,6 +175,11 @@ class AccountRestService(private val accountAppService: AccountAppService) {
             ApiResponse(
                 responseCode = "400",
                 description = "An error occurred when closing the account.",
+                content = [Content(schema = Schema(implementation = ErrorDto::class))]
+            ),
+            ApiResponse(
+                responseCode = "404",
+                description = "No account was found for the given ID.",
                 content = [Content(schema = Schema(implementation = ErrorDto::class))]
             ),
             ApiResponse(
