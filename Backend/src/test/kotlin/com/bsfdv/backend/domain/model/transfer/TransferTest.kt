@@ -2,6 +2,7 @@ package com.bsfdv.backend.domain.model.transfer
 
 import com.bsfdv.backend.domain.model.account.AccountId
 import com.bsfdv.backend.domain.model.common.Money
+import com.bsfdv.backend.domain.model.common.InvalidAmount
 import com.bsfdv.backend.suites.UNIT_TEST
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -27,15 +28,15 @@ class TransferTest {
     }
 
     @Test
-    fun throw_error_when_trying_to_create_a_transfer_with_negative_amount() {
+    fun throw_error_when_trying_to_create_a_transfer_with_an_amount_less_than_10() {
         // given
-        amount = Money(BigDecimal(-500))
+        amount = Money(BigDecimal(9))
 
         // when
 
         // then
         assertThatThrownBy { Transfer.doTransfer(source, destination, amount, motif) }
-            .isInstanceOf(InvalidTransferAmount::class.java)
+            .isInstanceOf(InvalidAmount::class.java)
     }
 
     @Test

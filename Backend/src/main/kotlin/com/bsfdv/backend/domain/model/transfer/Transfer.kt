@@ -5,10 +5,12 @@ import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.domain.model.core.DomainEntity
 import com.bsfdv.backend.domain.model.core.Event
 import com.bsfdv.backend.domain.model.core.EventStream
+import com.bsfdv.backend.domain.model.common.InvalidAmount
 import com.bsfdv.backend.domain.model.core.START_VERSION
 import com.bsfdv.backend.domain.model.transfer.event.TransferCompleted
 import com.bsfdv.backend.domain.model.transfer.event.TransferCreated
 import com.bsfdv.backend.domain.model.transfer.event.TransferRejected
+import java.math.BigDecimal
 import java.time.Instant
 
 open class Transfer(history: EventStream<TransferId>) : DomainEntity<TransferId>(history) {
@@ -21,7 +23,7 @@ open class Transfer(history: EventStream<TransferId>) : DomainEntity<TransferId>
 
     companion object {
         fun doTransfer(source: AccountId, destination: AccountId, amount: Money, motif: TransferMotif): Transfer {
-            verifyTransferAmount(amount)
+            verifyTransferAmountIsGreaterThanTen(amount)
             verifySourceAndDestinationAreDifferent(source, destination)
             val transferCreated = TransferCreated(
                 TransferId(), source, destination, amount, TransferStatus.PENDING,
@@ -31,9 +33,9 @@ open class Transfer(history: EventStream<TransferId>) : DomainEntity<TransferId>
             return Transfer(eventStream)
         }
 
-        private fun verifyTransferAmount(amount: Money) {
-            if (amount.isBelowZero())
-                throw InvalidTransferAmount(amount)
+        private fun verifyTransferAmountIsGreaterThanTen(amount: Money) {
+            if (amount.amount.compareTo(BigDecimal.TEN) < 0)
+                throw InvalidAmount(amount)
         }
 
         private fun verifySourceAndDestinationAreDifferent(source: AccountId, destination: AccountId) {

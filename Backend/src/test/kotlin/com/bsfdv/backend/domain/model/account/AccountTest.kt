@@ -2,6 +2,7 @@ package com.bsfdv.backend.domain.model.account
 
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.suites.UNIT_TEST
+import com.bsfdv.backend.domain.model.common.InvalidAmount
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -88,6 +89,18 @@ internal class AccountTest {
     }
 
     @Test
+    fun throw_error_when_depositing_money_with_amount_less_than_10() {
+        // given
+        val amount = Money(BigDecimal(8))
+
+        // when
+
+        // then
+        assertThatThrownBy { account.deposit(amount) }
+            .isInstanceOf(InvalidAmount::class.java)
+    }
+
+    @Test
     fun can_deposit_money() {
         // given
         val amount = Money(BigDecimal(2000))
@@ -110,6 +123,18 @@ internal class AccountTest {
         assertThatThrownBy { account.withdraw(amount) }
             .isInstanceOf(NoSufficientBalanceForWithdrawalOrTransfer::class.java)
         assertThat(account.balance).isEqualTo(balance)
+    }
+
+    @Test
+    fun throw_error_when_withdrawing_money_with_amount_less_than_10() {
+        // given
+        val amount = Money(BigDecimal(8))
+
+        // when
+
+        // then
+        assertThatThrownBy { account.withdraw(amount) }
+            .isInstanceOf(InvalidAmount::class.java)
     }
 
     @Test
@@ -136,6 +161,19 @@ internal class AccountTest {
         assertThatThrownBy { account.transfer(amount, destination) }
             .isInstanceOf(NoSufficientBalanceForWithdrawalOrTransfer::class.java)
         assertThat(account.balance).isEqualTo(balance)
+    }
+
+    @Test
+    fun throw_error_when_transferring_money_with_amount_less_than_10() {
+        // given
+        val amount = Money(BigDecimal(8))
+        val destination = AccountId()
+
+        // when
+
+        // then
+        assertThatThrownBy { account.transfer(amount, destination) }
+            .isInstanceOf(InvalidAmount::class.java)
     }
 
     @Test

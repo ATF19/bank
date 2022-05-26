@@ -3,6 +3,8 @@ package com.bsfdv.backend.domain.model.account
 import com.bsfdv.backend.domain.model.account.event.*
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.domain.model.core.*
+import com.bsfdv.backend.domain.model.common.InvalidAmount
+import java.math.BigDecimal
 import java.time.Instant
 
 open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(history) {
@@ -31,17 +33,20 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
     }
 
     fun deposit(amount: Money) {
+        verifyAmountIsGreaterThanTen(amount)
         val moneyDeposited = MoneyDeposited(id, amount, version.next(), Instant.now())
         addToHistoryAndApply(moneyDeposited)
     }
 
     fun withdraw(amount: Money) {
+        verifyAmountIsGreaterThanTen(amount)
         verifyHaveSufficientBalanceToRemoveAmount(amount)
         val moneyWithdrew = MoneyWithdrew(id, amount, version.next(), Instant.now())
         addToHistoryAndApply(moneyWithdrew)
     }
 
     fun transfer(amount: Money, destination: AccountId) {
+        verifyAmountIsGreaterThanTen(amount)
         verifyHaveSufficientBalanceToRemoveAmount(amount)
         val moneyTransferred = MoneyTransferred(id, amount, destination, version.next(), Instant.now())
         addToHistoryAndApply(moneyTransferred)
@@ -66,6 +71,11 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
     private fun verifyHaveSufficientBalanceToRemoveAmount(amount: Money) {
         if (balance.minus(amount).isBelowZero())
             throw NoSufficientBalanceForWithdrawalOrTransfer(amount)
+    }
+
+    private fun verifyAmountIsGreaterThanTen(amount: Money) {
+        if (amount.amount.compareTo(BigDecimal.TEN) < 0)
+            throw InvalidAmount(amount)
     }
 
     override fun apply(event: Event<AccountId>) {
