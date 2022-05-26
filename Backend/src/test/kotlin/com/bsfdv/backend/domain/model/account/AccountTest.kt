@@ -120,4 +120,44 @@ internal class AccountTest {
         // then
         assertThat(account.balance).isEqualTo(Money(BigDecimal(1000)))
     }
+
+    @Test
+    fun throw_error_when_trying_to_transfer_more_money_than_what_account_has_in_balance() {
+        // given
+        val amount = Money(BigDecimal(2000))
+        val destination = AccountId()
+
+        // when
+
+        // then
+        assertThatThrownBy { account.transfer(amount, destination) }
+            .isInstanceOf(NoSufficientBalanceForWithdrawal::class.java)
+        assertThat(account.balance).isEqualTo(balance)
+    }
+
+    @Test
+    fun can_transfer_money() {
+        // given
+        val amount = Money(BigDecimal(500))
+        val destination = AccountId()
+
+        // when
+        account.transfer(amount, destination)
+
+        // then
+        assertThat(account.balance).isEqualTo(Money(BigDecimal(1000)))
+    }
+
+    @Test
+    fun can_receive_money() {
+        // given
+        val amount = Money(BigDecimal(500))
+        val source = AccountId()
+
+        // when
+        account.receive(amount, source)
+
+        // then
+        assertThat(account.balance).isEqualTo(Money(BigDecimal(2000)))
+    }
 }

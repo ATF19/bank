@@ -34,6 +34,18 @@ class AccountAppService(private val accounts: Accounts, private val eventWriter:
         return saveAndReturnAccount(account)
     }
 
+    fun transferAmount(command: TransferAmountCommand): Account {
+        val account = accounts.by(command.accountId)
+        account.transfer(command.amountToTransfer, command.destination)
+        return saveAndReturnAccount(account)
+    }
+
+    fun receiveAmount(command: ReceiveAmountCommand): Account {
+        val account = accounts.by(command.accountId)
+        account.receive(command.amountToReceive, command.source)
+        return saveAndReturnAccount(account)
+    }
+
     fun closeAccount(command: CloseAccountCommand): Account {
         val account = accounts.by(command.accountId)
         account.closeAccount()

@@ -13,4 +13,8 @@ class DepositAmountCommand(val accountId: AccountId, val amountToDeposit: Money)
 
 class WithdrawAmountCommand(val accountId: AccountId, val amountToWithdraw: Money) : Command
 
+class TransferAmountCommand(val accountId: AccountId, val destination: AccountId, val amountToTransfer: Money) : Command
+
+class ReceiveAmountCommand(val accountId: AccountId, val source: AccountId, val amountToReceive: Money) : Command
+
 class CloseAccountCommand(val accountId: AccountId) : Command

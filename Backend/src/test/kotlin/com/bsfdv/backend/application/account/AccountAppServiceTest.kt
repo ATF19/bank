@@ -100,6 +100,32 @@ class AccountAppServiceTest {
     }
 
     @Test
+    fun delegate_transfer_to_domain_entity() {
+        // given
+        val oldBalance = account1.balance
+        val command = TransferAmountCommand(account1.id, account2.id, Money(BigDecimal(1000)))
+
+        // when
+        val result = accountAppService.transferAmount(command)
+
+        // then
+        assertThat(result.balance).isEqualTo(oldBalance.minus(command.amountToTransfer))
+    }
+
+    @Test
+    fun delegate_receive_to_domain_entity() {
+        // given
+        val oldBalance = account1.balance
+        val command = ReceiveAmountCommand(account1.id, account2.id, Money(BigDecimal(1000)))
+
+        // when
+        val result = accountAppService.receiveAmount(command)
+
+        // then
+        assertThat(result.balance).isEqualTo(oldBalance.plus(command.amountToReceive))
+    }
+
+    @Test
     fun delegate_account_closing_to_domain_entity() {
         // given
         val command = CloseAccountCommand(account2.id)

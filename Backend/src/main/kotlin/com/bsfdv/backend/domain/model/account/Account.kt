@@ -19,7 +19,7 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
         }
 
         private fun verifyBalance(initialBalance: Money) {
-            if (initialBalance.amount.signum() < 0)
+            if (initialBalance.isBelowZero())
                 throw InvalidInitialBalance(initialBalance)
         }
     }
@@ -35,9 +35,20 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
     }
 
     fun withdraw(amount: Money) {
-        verifyCanWithdrawAmount(amount)
+        verifyHaveSufficientBalanceToRemoveAmount(amount)
         val moneyWithdrew = MoneyWithdrew(id, amount, version.next(), Instant.now())
         addToHistoryAndApply(moneyWithdrew)
+    }
+
+    fun transfer(amount: Money, destination: AccountId) {
+        verifyHaveSufficientBalanceToRemoveAmount(amount)
+        val moneyTransferred = MoneyTransferred(id, amount, destination, version.next(), Instant.now())
+        addToHistoryAndApply(moneyTransferred)
+    }
+
+    fun receive(amount: Money, source: AccountId) {
+        val moneyReceived = MoneyReceived(id, amount, source, version.next(), Instant.now())
+        addToHistoryAndApply(moneyReceived)
     }
 
     fun closeAccount() {
@@ -51,9 +62,9 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
             throw ClosingAccountWithBalance()
     }
 
-    private fun verifyCanWithdrawAmount(amountToWithdraw: Money) {
-        if (balance.minus(amountToWithdraw).isBelowZero())
-            throw NoSufficientBalanceForWithdrawal(amountToWithdraw)
+    private fun verifyHaveSufficientBalanceToRemoveAmount(amount: Money) {
+        if (balance.minus(amount).isBelowZero())
+            throw NoSufficientBalanceForWithdrawal(amount)
     }
 
     override fun apply(event: Event<AccountId>) {
@@ -62,6 +73,8 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
             is HolderInformationUpdated -> applyHolderInformationUpdated(event)
             is MoneyDeposited -> applyMoneyDeposited(event)
             is MoneyWithdrew -> applyMoneyWithdrew(event)
+            is MoneyTransferred -> applyMoneyTransferred(event)
+            is MoneyReceived -> applyMoneyReceived(event)
         }
     }
 
@@ -80,6 +93,14 @@ open class Account(history: EventStream<AccountId>) : DomainEntity<AccountId>(hi
 
     private fun applyMoneyWithdrew(moneyWithdrew: MoneyWithdrew) {
         balance = balance.minus(moneyWithdrew.amount)
+    }
+
+    private fun applyMoneyTransferred(moneyTransferred: MoneyTransferred) {
+        balance = balance.minus(moneyTransferred.amount)
+    }
+
+    private fun applyMoneyReceived(moneyRecieved: MoneyReceived) {
+        balance = balance.plus(moneyRecieved.amount)
     }
 
     override fun equals(other: Any?): Boolean {
