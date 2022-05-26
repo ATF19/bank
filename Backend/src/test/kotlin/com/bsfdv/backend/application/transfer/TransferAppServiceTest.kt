@@ -4,6 +4,7 @@ import com.bsfdv.backend.domain.model.account.AccountId
 import com.bsfdv.backend.domain.model.common.Money
 import com.bsfdv.backend.domain.model.transfer.Transfer
 import com.bsfdv.backend.domain.model.transfer.TransferMotif
+import com.bsfdv.backend.domain.model.transfer.TransferStatus
 import com.bsfdv.backend.domain.service.core.EventWriter
 import com.bsfdv.backend.domain.service.transfer.Transfers
 import com.bsfdv.backend.suites.UNIT_TEST
@@ -29,7 +30,7 @@ class TransferAppServiceTest {
     @BeforeEach
     fun setUp() {
         transfers = mockk()
-        eventWriter = mockk()
+        eventWriter = mockk(relaxed = true)
         transferAppService = TransferAppService(transfers, eventWriter)
         transfer1 =
             Transfer.doTransfer(AccountId(), AccountId(), Money(BigDecimal(200)), TransferMotif("Just for testing"))
@@ -90,5 +91,45 @@ class TransferAppServiceTest {
 
         // then
         assertThat(result).containsExactlyInAnyOrder(transfer4)
+    }
+
+    @Test
+    fun delegate_do_transfer_to_domain_service() {
+        // given
+        val command =
+            DoTransferCommand(AccountId(), AccountId(), Money(BigDecimal(2000)), TransferMotif("Just for testing"))
+
+        // when
+        val result = transferAppService.doTransfer(command)
+
+        // then
+        assertThat(result.source).isEqualTo(command.source)
+        assertThat(result.destination).isEqualTo(command.destination)
+        assertThat(result.amount).isEqualTo(command.amount)
+        assertThat(result.motif).isEqualTo(command.motif)
+    }
+
+    @Test
+    fun delegate_complete_transfer_to_domain_service() {
+        // given
+        val command = CompleteTransferCommand(transfer1.id)
+
+        // when
+        val result = transferAppService.completeTransfer(command)
+
+        // then
+        assertThat(result.status).isEqualTo(TransferStatus.COMPLETED)
+    }
+
+    @Test
+    fun delegate_reject_transfer_to_domain_service() {
+        // given
+        val command = RejectTransferCommand(transfer1.id)
+
+        // when
+        val result = transferAppService.rejectTransfer(command)
+
+        // then
+        assertThat(result.status).isEqualTo(TransferStatus.REJECTED)
     }
 }
