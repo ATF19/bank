@@ -22,8 +22,8 @@ After starting the backend, you can use Swagger UI to test it by simply opening 
 ### Concepts
 While writing this small backend, the following concepts were used:
 * **DDD**: Domain Driven Design is used to focus on the domain requirements of the application.
-* **Onion Architecture**: The code is structured using the onion architecture with 4 big layers (domain, application, infrastructure and presentation).
-* **Event Sourcing**: I chose event sourcing to make it easier to implement (in the future) accounts and operations histories which is always needed in a banking app.
+* **Onion Architecture**: The code is structured using the onion architecture with 4 layers (domain, application, infrastructure and presentation).
+* **Event Sourcing**: I chose event sourcing to make it easier to implement (in the future) account and operation histories which, in my opinion, is always needed in a banking app.
 * **TDD**: TDD is used to drive the implementation.
 
 ### Technologies
@@ -43,8 +43,7 @@ These two contextes are separated from each other and can be extracted into diff
 After doing a transfer, it is needed to deduct an amount from the sender (an account) and give it to the receiver (also an account). To achieve this without coupling the `Account` and the `Transfer` together, an event is used and once a transfer is created, a listener will update the accounts accordingly.
 Currently, a `Guava EventBus` is used but in real-life it would be better to rely on a queue.
 
-Concurrency is handled by using optimistic locking with a version number on the event and it should always different that what's already there (a constraint in the DB).
-
+Concurrency is handled by using optimistic locking with a version number on the event and it should always be different than what's already there (a constraint in the DB).
 
 Thank you.
 
